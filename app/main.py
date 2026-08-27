@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import init_db
-from app.routers import subscriptions
+from app.routers import events, subscriptions
 
 
 @asynccontextmanager
@@ -25,6 +25,7 @@ app = FastAPI(
 templates = Jinja2Templates(directory="app/templates")
 
 app.include_router(subscriptions.router)
+app.include_router(events.router)
 
 
 @app.get("/health")
