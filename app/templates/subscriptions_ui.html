@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Subscriptions – Webhook Delivery System{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Subscriptions</h1>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+    <h2 class="font-semibold text-gray-700">All Subscriptions</h2>
+    <a href="/docs#/subscriptions/create_subscription_subscriptions__post"
+       target="_blank"
+       class="text-xs bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">
+      + New via API ↗
+    </a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+        <tr>
+          <th class="px-5 py-2 text-left">ID</th>
+          <th class="px-5 py-2 text-left">URL</th>
+          <th class="px-5 py-2 text-left">Event Types</th>
+          <th class="px-5 py-2 text-left">Status</th>
+          <th class="px-5 py-2 text-left">Created</th>
+          <th class="px-5 py-2 text-left">Description</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for sub in subscriptions %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-5 py-3 font-mono text-xs text-gray-400">{{ sub.id[:8] }}…</td>
+          <td class="px-5 py-3 text-xs max-w-xs truncate" title="{{ sub.url }}">{{ sub.url }}</td>
+          <td class="px-5 py-3">
+            {% for et in sub.event_types %}
+            <span class="text-xs bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded-full mr-1">{{ et }}</span>
+            {% endfor %}
+          </td>
+          <td class="px-5 py-3">
+            {% if sub.is_active %}
+              <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">active</span>
+            {% else %}
+              <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">inactive</span>
+            {% endif %}
+          </td>
+          <td class="px-5 py-3 text-xs text-gray-400">{{ sub.created_at.strftime('%Y-%m-%d') }}</td>
+          <td class="px-5 py-3 text-xs text-gray-500">{{ sub.description or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="px-5 py-8 text-center text-gray-400 text-sm">
+            No subscriptions yet. Create one via <code>POST /subscriptions/</code>.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

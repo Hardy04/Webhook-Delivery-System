@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – Webhook Delivery System{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Delivery Dashboard</h1>
+
+<!-- Stat tiles -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  {% for tile in stats %}
+  <div class="bg-white rounded-xl shadow p-4 flex flex-col gap-1">
+    <span class="text-sm text-gray-500">{{ tile.label }}</span>
+    <span class="text-3xl font-bold {{ tile.color }}">{{ tile.value }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Recent events table -->
+<div class="bg-white rounded-xl shadow overflow-hidden mb-10">
+  <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+    <h2 class="font-semibold text-gray-700">Recent Events</h2>
+    <span class="text-xs text-gray-400">latest 50</span>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+        <tr>
+          <th class="px-5 py-2 text-left">Event ID</th>
+          <th class="px-5 py-2 text-left">Type</th>
+          <th class="px-5 py-2 text-left">Received</th>
+          <th class="px-5 py-2 text-left">Deliveries</th>
+          <th class="px-5 py-2 text-left">Status</th>
+          <th class="px-5 py-2"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for row in events %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-5 py-3 font-mono text-xs text-gray-400">{{ row.event.id[:8] }}…</td>
+          <td class="px-5 py-3">
+            <span class="bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5 rounded-full">{{ row.event.event_type }}</span>
+          </td>
+          <td class="px-5 py-3 text-gray-500 text-xs">{{ row.event.received_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td class="px-5 py-3">{{ row.total }}</td>
+          <td class="px-5 py-3">
+            {% if row.success > 0 and row.failed == 0 and row.dead == 0 %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800">all delivered</span>
+            {% elif row.dead > 0 %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-700">{{ row.dead }} dead</span>
+            {% elif row.failed > 0 or row.pending > 0 %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">{{ row.pending }} pending · {{ row.failed }} failed</span>
+            {% else %}
+              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">no deliveries</span>
+            {% endif %}
+          </td>
+          <td class="px-5 py-3">
+            <a href="/dashboard/events/{{ row.event.id }}" class="text-indigo-600 hover:underline text-xs">Details →</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="px-5 py-8 text-center text-gray-400 text-sm">No events yet. POST to <code>/events/</code> to get started.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

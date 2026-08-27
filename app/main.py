@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import init_db
-from app.routers import attempts, events, subscriptions
+from app.routers import attempts, dashboard, events, subscriptions
 from app.services.scheduler import retry_worker
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -37,6 +37,7 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="app/templates")
 
+app.include_router(dashboard.router)
 app.include_router(subscriptions.router)
 app.include_router(events.router)
 app.include_router(attempts.router)
