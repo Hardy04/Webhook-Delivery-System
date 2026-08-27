@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import init_db
+from app.routers import subscriptions
 
 
 @asynccontextmanager
@@ -23,7 +24,9 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="app/templates")
 
-# Routers are registered in later phases; placeholder keeps the app runnable.
+app.include_router(subscriptions.router)
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
